@@ -22,7 +22,7 @@ const db = mysql.createConnection({
 });
 
 app.get('/',(req,res)=>{
-    res.send('Hello World');
+    res.send('Back-End working.');
 })
 
 app.post('/register',jsonParser,(req,res) =>{
@@ -70,7 +70,7 @@ app.post('/register',jsonParser,(req,res) =>{
     }
 });
 
-app.get('/login',jsonParser,(req,res)=>{
+app.post('/login',jsonParser,(req,res)=>{
     const email = req.body.email;
     const password = req.body.password;
     if(!email ||!password){
