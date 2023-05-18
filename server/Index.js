@@ -8,11 +8,12 @@ const secretwar = "ab32jt21";
 
 const app = express();
 
-const jsonParser = bodyParser.json();
 const saltRounds = 10;
 
 app.use(cors());
 app.use(express.json());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 const db = mysql.createConnection({
     host:'localhost',
@@ -25,7 +26,7 @@ app.get('/',(req,res)=>{
     res.send('Back-End working.');
 })
 
-app.post('/register',jsonParser,(req,res) =>{
+app.post('/register',(req,res) =>{
     const email = req.body.email;
     const password = req.body.password;
     const fname = req.body.fname;
@@ -70,7 +71,7 @@ app.post('/register',jsonParser,(req,res) =>{
     }
 });
 
-app.post('/login',jsonParser,(req,res)=>{
+app.post('/login',(req,res)=>{
     const email = req.body.email;
     const password = req.body.password;
     if(!email ||!password){
@@ -98,10 +99,12 @@ app.post('/login',jsonParser,(req,res)=>{
                     console.log(err);
                 }else{
                     if(isLogin == true){
-                        const token = jwt.sign({email:result[0].email},secretwar,{ expiresIn: '1h' });
+                        const token = jwt.sign({email:result[0].email},secretwar,{ expiresIn: '720h' });
                         res.status(200).json({
                             status:200,
                             message:'Login successful',
+                            userID:result[0].id,
+                            email:result[0].email,
                             token:token
                         });
                     }else{
@@ -116,7 +119,7 @@ app.post('/login',jsonParser,(req,res)=>{
     }
 });
 
-app.post('/authen',jsonParser,(req,res)=>{
+app.post('/authen',(req,res)=>{
     try{
         const token = req.headers.authorization.split(' ')[1];
         const decoded = jwt.verify(token, secretwar);
